@@ -13,40 +13,50 @@ var msecsFirst = 0;
 var msecsPrevious = 0;
 
 function ResetCount()
-  {
+{
   count = 0;
   document.TAP_DISPLAY.T_AVG.value = "";
   document.TAP_DISPLAY.T_TAP.value = "";
   document.TAP_DISPLAY.T_RESET.blur();
-  }
+}
 
 function TapForBPM(e)
-  {
+{
+  console.log(e.keyCode);
+  if (e.keyCode == 122) {
+    ResetCount();
+    return true;
+  }
+
   document.TAP_DISPLAY.T_WAIT.blur();
   timeSeconds = new Date;
   msecs = timeSeconds.getTime();
   if ((msecs - msecsPrevious) > 1000 * document.TAP_DISPLAY.T_WAIT.value)
-    {
+  {
     count = 0;
-    }
+  }
 
   if (count == 0)
-    {
+  {
     document.TAP_DISPLAY.T_AVG.value = "First Beat";
     document.TAP_DISPLAY.T_TAP.value = "First Beat";
     msecsFirst = msecs;
     count = 1;
-    }
+  }
   else
-    {
+  {
     bpmAvg = 60000 * count / (msecs - msecsFirst);
     document.TAP_DISPLAY.T_AVG.value = (Math.round(bpmAvg * 100)) / 100;
     count++;
     document.TAP_DISPLAY.T_TAP.value = count;
-    }
-  msecsPrevious = msecs;
-  return true;
   }
+
+  msecsPrevious = msecs;
+  
+  return true;
+
+}
+
 document.onkeypress = TapForBPM;
 
 </script>
@@ -100,7 +110,7 @@ document.onkeypress = TapForBPM;
 
 <div class="notes">
 <p>Use any key - Start tapping to measure BPM<br>
-Pause
+Pres &quot;z&quot; or pause
 <select name="T_WAIT">
   <option value="1">1</option>
   <option value="2" SELECTED>2</option>
