@@ -1,0 +1,122 @@
+<html>
+<head>
+<title>Tap for Beats Per Minute BPM</title>
+
+<script language="JavaScript">
+<!-- Original:  Derek Chilcote-Batto (dac-b@usa.net) -->
+<!-- Web Site:  http://www.mixed.net -->
+<!-- Rewritten by: Rich Reel all8.com -->
+<!-- Re-rewritten by: Lucas garron.us -->
+
+var count = 0;
+var msecsFirst = 0;
+var msecsPrevious = 0;
+
+function ResetCount()
+  {
+  count = 0;
+  document.TAP_DISPLAY.T_AVG.value = "";
+  document.TAP_DISPLAY.T_TAP.value = "";
+  document.TAP_DISPLAY.T_RESET.blur();
+  }
+
+function TapForBPM(e)
+  {
+  document.TAP_DISPLAY.T_WAIT.blur();
+  timeSeconds = new Date;
+  msecs = timeSeconds.getTime();
+  if ((msecs - msecsPrevious) > 1000 * document.TAP_DISPLAY.T_WAIT.value)
+    {
+    count = 0;
+    }
+
+  if (count == 0)
+    {
+    document.TAP_DISPLAY.T_AVG.value = "First Beat";
+    document.TAP_DISPLAY.T_TAP.value = "First Beat";
+    msecsFirst = msecs;
+    count = 1;
+    }
+  else
+    {
+    bpmAvg = 60000 * count / (msecs - msecsFirst);
+    document.TAP_DISPLAY.T_AVG.value = (Math.round(bpmAvg * 100)) / 100;
+    count++;
+    document.TAP_DISPLAY.T_TAP.value = count;
+    }
+  msecsPrevious = msecs;
+  return true;
+  }
+document.onkeypress = TapForBPM;
+
+</script>
+
+<style type="text/css">
+	body {
+		font-family: Helvetica;
+		background: #ABC;
+		color: rgba(0,0,0,0.5);
+	}
+	.label {
+		font-family: monospace;
+		text-align: center;
+		font-size: 2em;
+	}
+	.disp {
+		font-size: 4em;
+		text-align: center;
+		background: rgba(1,1,1,0.1);
+		color: #000;
+		border: none;
+		font-family: monospace; 
+		width: 100%;
+		border-radius: 0.25em;
+		max-width: 7em;
+	}
+	.main {
+		border: 1px solid #888;
+		border-radius: 1em;
+		padding: 0em;
+		background: rgba(1,1,1,0.05);
+		padding: 1em;
+	}
+	.notes {
+		text-align: center;
+	}
+	.comment {
+		font-size: 70%;
+	}
+</style>
+</head>
+
+<body>
+
+<form name="TAP_DISPLAY">
+<div class="main">
+<div class="label">Average BPM</div>
+<center><input readonly name="T_AVG" class="disp" size=12></td></center>
+<div class="label">Timing Taps</div>
+<center><input readonly name="T_TAP" class="disp" size=12></td></center>
+
+<div class="notes">
+<p>Use any key - Start tapping to measure BPM<br>
+Pause
+<select name="T_WAIT">
+  <option value="1">1</option>
+  <option value="2" SELECTED>2</option>
+  <option value="3">3</option>
+  <option value="4">4</option>
+  <option value="5">5</option>
+</select>
+second(s) or <input type="button" name="T_RESET" value="RESET" onclick="ResetCount()"> to start again<br>
+Touchscreen? Click here &gt;<input name="T_FOCUS" size=2 maxLength=1>&lt; to activate keyboard.</p>
+
+<div class="comment">
+<p>(Tap once per measure for Measures Per Minute - set Pause to 5 seconds)<br>
+Based on a <a href="http://www.all8.com/tools/bpm.htm">page</a> by <a href="http://www.all8.com/rich.htm">Rich Reel</a></p>
+</div></div>
+
+</div></form>
+
+</body>
+</html>
