@@ -27,7 +27,12 @@ function TapForBPM(e)
     ResetCount();
     return true;
   }
+  else {
+    addBeat();
+  }
+}
 
+function addBeat() {
   document.TAP_DISPLAY.T_WAIT.blur();
   timeSeconds = new Date;
   msecs = timeSeconds.getTime();
@@ -57,7 +62,24 @@ function TapForBPM(e)
 
 }
 
+
+function touchStart() {
+  document.getElementById("T_TAP").setAttribute("class", "disp tapped");
+  addBeat();
+}
+
+function touchEnd() {
+  document.getElementById("T_TAP").setAttribute("class", "disp");
+}
+
 document.onkeypress = TapForBPM;
+
+function ini() {
+  document.getElementById("tap_area").addEventListener( 'touchstart', touchStart, false );
+  //document.getElementById("tap_area").addEventListener( 'touchend', touchEnd, false );
+  //document.getElementById("tap_area").addEventListener( 'mousedown', touchStart, false );
+  //document.getElementById("tap_area").addEventListener( 'mouseup', touchEnd, false );
+}
 
 </script>
 
@@ -72,22 +94,25 @@ document.onkeypress = TapForBPM;
 		text-align: center;
 		font-size: 2em;
 	}
-	.disp {
-		font-size: 4em;
-		text-align: center;
-		background: rgba(1,1,1,0.1);
-		color: #000;
-		border: none;
-		font-family: monospace; 
-		width: 100%;
-		border-radius: 0.25em;
-		max-width: 7em;
-	}
+  .disp {
+    font-size: 4em;
+    text-align: center;
+    background: rgba(0, 0, 0, 0.1);
+    color: #000;
+    border: none;
+    font-family: monospace; 
+    width: 100%;
+    border-radius: 0.25em;
+    max-width: 7em;
+  }
+  .tapped {
+    background: rgba(255, 255, 255,0.8);
+  }
 	.main {
 		border: 1px solid #888;
 		border-radius: 1em;
 		padding: 0em;
-		background: rgba(1,1,1,0.05);
+		background: rgba(0, 0, 0, 0.05);
 		padding: 1em;
 	}
 	.notes {
@@ -99,14 +124,17 @@ document.onkeypress = TapForBPM;
 </style>
 </head>
 
-<body>
+<body onload="ini()">
 
 <form name="TAP_DISPLAY">
 <div class="main">
+
+<div id="tap_area">
 <div class="label">Average BPM</div>
-<center><input readonly name="T_AVG" class="disp" size=12></td></center>
+<center><input readonly name="T_AVG" id="T_AVG" class="disp" size=12></center>
 <div class="label">Timing Taps</div>
-<center><input readonly name="T_TAP" class="disp" size=12></td></center>
+<center><input readonly name="T_TAP" id="T_TAP" class="disp" size=12></center>
+</div>
 
 <div class="notes">
 <p>Use any key - Start tapping to measure BPM<br>
