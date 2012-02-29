@@ -62,12 +62,6 @@ function addBeat() {
   timeSeconds = new Date;
   msecs = timeSeconds.getTime();
   var bpmAvg;
-
-  r.clear();
-  var m1 = lengths.map(Math.round);
-  var m2 = m1.map(function(a){return a;});
-  m2.reverse();
-  r.barchart(0, 0, 640, 120, [m1, m2]).hover(fin, fout);
   
   if (lastTime === null) {
     lastTime = msecs;
@@ -100,6 +94,12 @@ function addBeat() {
   }
 
   msecsPrevious = msecs;
+
+  r.clear();
+  var m1 = lengths.map(Math.round);
+  var m2 = m1.map(function(a){return a;});
+  m2.reverse();
+  r.barchart(0, 0, 640, 120, [m1, m2]).hover(fin, fout);
   
   return true;
 
