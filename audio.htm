@@ -56,7 +56,7 @@ function addBeat() {
   document.TAP_DISPLAY.T_WAIT.blur();
   timeSeconds = new Date;
   msecs = timeSeconds.getTime();
-  beats.push(msecs - startTime);
+  beats.push([(msecs - startTime)/1000.]);
   document.getElementById("beat_vals").innerHTML = JSON.stringify(beats);
   if ((msecs - msecsPrevious) > 1000 * document.TAP_DISPLAY.T_WAIT.value)
   {
