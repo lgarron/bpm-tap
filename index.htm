@@ -23,6 +23,7 @@ function ResetCount()
 {
   count = 0;
   lengths = [];
+  lastTime = null;
   document.TAP_DISPLAY.T_AVG.value = "";
   document.TAP_DISPLAY.T_TAP.value = "";
   document.TAP_DISPLAY.T_RESET.blur();
@@ -68,7 +69,7 @@ function addBeat() {
   }
   else {
     lengths.push(60000/(msecs - lastTime));
-    lengths = lengths.sort(function(a, b){return a - b});
+    //lengths = lengths.sort(function(a, b){return a - b});
     lastTime = msecs;
   }
 
