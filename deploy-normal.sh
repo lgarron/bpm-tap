@@ -2,7 +2,7 @@
 
 
 # This script modifies the manifest file to include a unique timestamp on every upload (so that browsers will look for a new version). In case of failure, we end up with a modified manifest file that will be restored to normal on next success.
-MANIFEST_FILE="inc/cache.manifest"
+MANIFEST_FILE="inc/offline/cache.manifest"
 
 # Call this before deploying to your web server.
 function pre_deploy {
