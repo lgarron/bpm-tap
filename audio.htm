@@ -16,7 +16,8 @@ var startTime = 0;
 var beats = [];
 
 function currentTime() {
-  return new Date().getTime();
+  var time = document.getElementById("audio").currentTime;
+  return time;
 }
 
 function ResetCount()
@@ -27,24 +28,50 @@ function ResetCount()
   document.TAP_DISPLAY.T_RESET.blur();
 }
 
-function startAudio() {
-  if (!playing) {
+function startAudio(force) {
+  if (!playing || force) {
+    document.getElementById("audio").currentTime = 0;
     document.getElementById("audio").play();
     startTime = currentTime();
     playing = true;
   }
 }
 
+function displayBeats() {
+  document.getElementById("beat_vals").innerHTML = JSON.stringify(beats);
+}
+
+function resetBeats() {
+  beats = [];
+  displayBeats();
+}
+
+function undoLastBeats(n) {
+  len = Math.max(beats.length - n, 0);
+  beats.length = len;
+  document.getElementById("audio").currentTime = beats[len-1];
+  displayBeats();
+}
+
 function TapForBPM(e)
 {
   console.log(e.keyCode);
   switch (e.keyCode) {
-    case 122:
+    case 122: // z
       ResetCount();
       return true;
       break;
-    case 115:
-      startAudio();
+    case 115: // s
+      startAudio(false);
+      break;
+    case 114: // r
+      startAudio(true);
+      break;
+    case 113: // q
+      resetBeats();
+      break;
+    case 98: // b
+      undoLastBeats(3);
       break;
     default:
       addBeat();
@@ -53,15 +80,9 @@ function TapForBPM(e)
 }
 
 function addBeat() {
-  document.TAP_DISPLAY.T_WAIT.blur();
-  timeSeconds = new Date;
-  msecs = timeSeconds.getTime();
+  msecs = Math.floor(currentTime()*1000);
   beats.push([(msecs - startTime)/1000.]);
-  document.getElementById("beat_vals").innerHTML = JSON.stringify(beats);
-  if ((msecs - msecsPrevious) > 1000 * document.TAP_DISPLAY.T_WAIT.value)
-  {
-    count = 0;
-  }
+  displayBeats();
 
   if (count == 0)
   {
@@ -95,12 +116,58 @@ function touchEnd() {
 }
 
 document.onkeypress = TapForBPM;
+function dragEnter(ev) {
+  console.log("Enter");
+  //ev.preventDefault();
+  return true;
+}
+
+function setDragDropVisualFeedback(text, cssClass) {
+  document.getElementById("new_song").innerHTML = text;
+  var cL = document.getElementById("new_song").classList;
+  while (cL.length > 0) {
+    cL.remove(cL[0]);
+  }
+  document.getElementById("new_song").classList.add(cssClass);
+}
+
+function dragOver(ev) {
+  console.log("Over");
+  setDragDropVisualFeedback("Let Go!", "over");
+  return false;
+}
+
+function dragLeave(ev) {
+  console.log("Leave");
+  setDragDropVisualFeedback("Come back! :-(", "out");
+  return false;
+}
+
+var fff;
+var ggg;
+
+function dragDrop(ev) {
+  console.log("Drop");
+  var src = ev.dataTransfer.files[0];
+  document.getElementById("audio").src = window.webkitURL.createObjectURL(src.webkitSlice(0));
+  setDragDropVisualFeedback("Got it! :-)<br>Press 's' to begin playing.", "done");
+  ev.preventDefault();
+  return false;
+}
+
+
 
 function ini() {
   document.getElementById("tap_area").addEventListener( 'touchstart', touchStart, false );
   //document.getElementById("tap_area").addEventListener( 'touchend', touchEnd, false );
   //document.getElementById("tap_area").addEventListener( 'mousedown', touchStart, false );
   //document.getElementById("tap_area").addEventListener( 'mouseup', touchEnd, false );
+
+
+  document.body.addEventListener( 'dragenter', dragEnter, false );
+  document.body.addEventListener( 'dragover', dragOver, false );
+  document.body.addEventListener( 'dragleave', dragLeave, false );
+  document.body.addEventListener( 'drop', dragDrop, false );
 }
 
 </script>
@@ -144,8 +211,33 @@ function ini() {
 		font-size: 70%;
 	}
   #beat_vals {
-    width: 400px;
+    width: 100%;
     height: 100px;
+  }
+  #new_song {
+    font-size: 200%;
+    padding: 0.5em;
+    margin: 0.5em;
+    width: 400px;
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+  }
+  #new_song.over {
+    background: rgba(255, 255, 0, 0.5);
+  }
+  #new_song.out {
+    background: rgba(255, 0, 0, 0.5);
+  }
+  #new_song.done {
+    background: rgba(0, 255, 0, 0.5);
+  }
+  #instructions {
+    text-align: left;
+    margin: auto;
+    width: 250px;
+  }
+  #tap_area {
+    display: none; /* The fields may have false information if "B" was pressed. */
   }
 </style>
 </head>
@@ -157,7 +249,8 @@ function ini() {
 <div class="main">
 
 <center>
-<audio src="file.wav" controls preload="yes" autobuffer id="audio"></audio>
+<audio controls preload="yes" autobuffer id="audio"></audio>
+<div id="new_song">Drag and drop a song here!</div>
 </center>
 
 <div id="tap_area">
@@ -168,27 +261,22 @@ function ini() {
 </div>
 
 <div class="notes">
-<p>Use any key - Start tapping to measure BPM<br>
-Pres &quot;z&quot; or pause
-<select name="T_WAIT">
-  <option value="1">1</option>
-  <option value="2" SELECTED>2</option>
-  <option value="3">3</option>
-  <option value="4">4</option>
-  <option value="5">5</option>
-</select>
-second(s) or <input type="button" name="T_RESET" value="RESET" onclick="ResetCount()"> to start again<br>
-Touchscreen? Click here &gt;<input name="T_FOCUS" size=2 maxLength=1>&lt; to activate keyboard.</p>
-
-<div class="comment">
-<p>(Tap once per measure for Measures Per Minute - set Pause to 5 seconds)<br>
-Based on a <a href="http://www.all8.com/tools/bpm.htm">page</a> by <a href="http://www.all8.com/rich.htm">Rich Reel</a></p>
-</div></div>
+<div id="instructions">
+  <ul>
+    <li>R/S: (Re-)Start the song</li>
+    <li>Q: Clear the beats</li>
+    <li>B: Back a few beats</li>
+  </ul>
+</div>
 
 <center>
 <textarea id="beat_vals">
 </textarea>
-</center
+</center>
+
+<div class="comment">
+<p><a href="./">Regular BPM</a></p>
+</div></div>
 
 </div></form>
 
