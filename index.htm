@@ -49,9 +49,11 @@ fout = function () {
 }
 
 // avg(list, 0.4, 0.6) takes a mean of the middle 20%.
-function avg(list, start, end) {
+function avg(listIn, start, end) {
+  var listCopy = listIn.slice(0);
+  listCopy.sort(function(a, b){return a - b});
   var total = 0;
-  var l2 = list.slice(Math.floor(start*list.length), Math.ceil(end*list.length));
+  var l2 = listCopy.slice(Math.floor(start*listCopy.length), Math.ceil(end*listCopy.length));
   for (var i = 0; i < l2.length; i++) {
     total += l2[i];
   }
@@ -99,8 +101,8 @@ function addBeat() {
   r.clear();
   var m1 = lengths.map(Math.round);
   var m2 = m1.map(function(a){return a;});
-  m2.reverse();
-  r.barchart(0, 0, 640, 120, [m1, m2]).hover(fin, fout);
+  //m2.reverse();
+  r.barchart(0, 0, 640, 120, [m1]).hover(fin, fout);
   
   return true;
 
