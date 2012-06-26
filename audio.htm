@@ -140,7 +140,7 @@ function dragOver(ev) {
 
 function dragLeave(ev) {
   console.log("Leave");
-  setDragDropVisualFeedback("Come back! :-(", "out");
+  setDragDropVisualFeedback("Come back! :-D", "out");
   return false;
 }
 
@@ -151,7 +151,17 @@ function dragDrop(ev) {
   console.log("Drop");
   var src = ev.dataTransfer.files[0];
   document.getElementById("audio").src = window.webkitURL.createObjectURL(src.webkitSlice(0));
-  setDragDropVisualFeedback("Got it! :-)<br>Press 's' to begin playing.", "done");
+  
+  console.log(document.getElementById("audio").src);
+
+  // I can't find the right way to check this. For now, it'll always report success. :-/
+  if (document.getElementById("audio").src !== undefined) {
+    setDragDropVisualFeedback("Got it! :-)<br>Press 's' to begin playing.", "done");
+  }
+  else {
+    setDragDropVisualFeedback("Didn't work. :-(<br>(Did you open this page on your hard drive?)", "error");
+  }
+  
   ev.preventDefault();
   return false;
 }
@@ -231,6 +241,9 @@ function ini() {
   }
   #new_song.done {
     background: rgba(0, 255, 0, 0.5);
+  }
+  #new_song.error {
+    background: rgba(255, 0, 0, 0.7);
   }
   #instructions {
     text-align: left;
