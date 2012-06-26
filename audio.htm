@@ -39,6 +39,7 @@ function startAudio(force) {
 
 function displayBeats() {
   document.getElementById("beat_vals").innerHTML = JSON.stringify(beats);
+  document.getElementById("num_beats").innerHTML = beats.length;
 }
 
 function resetBeats() {
@@ -212,10 +213,10 @@ function ini() {
 	}
   #beat_vals {
     width: 100%;
-    height: 100px;
+    height: 150px;
   }
-  #new_song {
-    font-size: 200%;
+  #new_song, #num_beats {
+    font-size: 120%;
     padding: 0.5em;
     margin: 0.5em;
     width: 400px;
@@ -251,6 +252,7 @@ function ini() {
 <center>
 <audio controls preload="yes" autobuffer id="audio"></audio>
 <div id="new_song">Drag and drop a song here!</div>
+<div id="num_beats">Beats</div>
 </center>
 
 <div id="tap_area">
