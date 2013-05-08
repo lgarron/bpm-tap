@@ -118,6 +118,7 @@ function touchEnd() {
 
 document.onkeypress = TapForBPM;
 function dragEnter(ev) {
+  ev.preventDefault();
   console.log("Enter");
   //ev.preventDefault();
   return true;
@@ -133,12 +134,14 @@ function setDragDropVisualFeedback(text, cssClass) {
 }
 
 function dragOver(ev) {
+  ev.preventDefault();
   console.log("Over");
   setDragDropVisualFeedback("Let Go!", "over");
   return false;
 }
 
 function dragLeave(ev) {
+  ev.preventDefault();
   console.log("Leave");
   setDragDropVisualFeedback("Come back! :-D", "out");
   return false;
@@ -148,9 +151,11 @@ var fff;
 var ggg;
 
 function dragDrop(ev) {
+  ev.preventDefault();
   console.log("Drop");
   var src = ev.dataTransfer.files[0];
-  document.getElementById("audio").src = window.webkitURL.createObjectURL(src.webkitSlice(0));
+  var bl = new Blob([src]);
+  document.getElementById("audio").src = window.webkitURL.createObjectURL(bl);
   
   console.log(document.getElementById("audio").src);
 
@@ -162,7 +167,6 @@ function dragDrop(ev) {
     setDragDropVisualFeedback("Didn't work. :-(<br>(Did you open this page on your hard drive?)", "error");
   }
   
-  ev.preventDefault();
   return false;
 }
 
