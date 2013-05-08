@@ -50,7 +50,7 @@ function resetBeats() {
 function undoLastBeats(n) {
   len = Math.max(beats.length - n, 0);
   beats.length = len;
-  document.getElementById("audio").currentTime = beats[len-1];
+  document.getElementById("audio").currentTime = beats[len-1][0];
   displayBeats();
 }
 
@@ -74,15 +74,26 @@ function TapForBPM(e)
     case 98: // b
       undoLastBeats(3);
       break;
+    case 99: // c
+      addBeat(true);
+      break;
+    case 109: // m
+      addBeat(true);
+      break;
     default:
-      addBeat();
+      addBeat(false);
       break;
   }
 }
 
-function addBeat() {
+function addBeat(n) {
   msecs = Math.floor(currentTime()*1000);
-  beats.push([(msecs - startTime)/1000.]);
+  toPush = [(msecs - startTime)/1000., 0];
+  if (n) {
+    toPush[1] = 1;
+  }
+  beats.push(toPush);
+
   displayBeats();
 
   if (count == 0)
@@ -109,7 +120,7 @@ function addBeat() {
 
 function touchStart() {
   document.getElementById("T_TAP").setAttribute("class", "disp tapped");
-  addBeat();
+  addBeat(false);
 }
 
 function touchEnd() {
@@ -285,6 +296,8 @@ function ini() {
     <li>R/S: (Re-)Start the song</li>
     <li>Q: Clear the beats</li>
     <li>B: Back a few beats</li>
+    <li>Space: Beats</li>
+    <li>C/M: Downbeat</li>
   </ul>
 </div>
 
