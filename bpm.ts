@@ -108,7 +108,7 @@ class App {
     var decimalStr = "_";
     if (val) {
       var strValTimes10 = "" + Math.round(val * 10);
-      intFirstStr = strValTimes10[0];
+      intFirstStr = val < 1 ? String("0") : strValTimes10[0];
       intRestStr = strValTimes10.slice(1, -1);
       decimalStr = strValTimes10.slice(-1);
     }
