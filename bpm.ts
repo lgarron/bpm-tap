@@ -8,6 +8,11 @@ var RESET_TIMEOUT_MS: number = 5000;
 // https://en.wikipedia.org/wiki/Confidence_interval#Basic_steps
 // 99% Confidence Interval
 var Z_STAR_99_PERCENT = 2.576;
+// Adjacent tap deviations are correlated, so normal confidence interval
+// estimation is actually kind of useless. A trimmed mean of 20 taps with 60
+// milliseconds of standard deviation for each tap for a 126 bpm beat gives a
+// factor of about 2.3.
+var CONFIDENCE_INTERVAL_SCALE = 2;
 
 class Statistics {
 
@@ -83,9 +88,10 @@ class TempoEstimator {
     var stdDev = Statistics.stdDev(trimmed);
     var bpm_estimate = ONE_MINUTE_MS / mean;
 
-    var duration_confidence_radius_99_percent = Z_STAR_99_PERCENT * stdDev / Math.sqrt(trimmed.length);
+    var duration_confidence_radius_99_percent = Z_STAR_99_PERCENT * stdDev / Math.sqrt(trimmed.length) / CONFIDENCE_INTERVAL_SCALE;
     // The radius becomes slightly asymmetric when inverted, so we take the larger one.
     var bpm_confidence_radius_99_percent = ONE_MINUTE_MS / (mean - duration_confidence_radius_99_percent) - bpm_estimate;
+
 
     if (trimmed.length < 4) {
       bpm_confidence_radius_99_percent = null;
