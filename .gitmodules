@@ -1,3 +1,0 @@
-[submodule "auto"]
-	path = auto
-	url = git://github.com/lgarron/echonest-analysis.js.git
