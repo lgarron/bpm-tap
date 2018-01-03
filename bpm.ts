@@ -9,9 +9,7 @@ var RESET_TIMEOUT_MS: number = 5000;
 // 99% Confidence Interval
 var Z_STAR_99_PERCENT = 2.576;
 // Adjacent tap deviations are correlated, so normal confidence interval
-// estimation is actually kind of useless. A trimmed mean of 20 taps with 60
-// milliseconds of standard deviation for each tap for a 126 bpm beat gives a
-// factor of about 2.3.
+// estimation is actually kind of useless. This adjustment doesn't mean much, but it works roughly right in practice.
 var CONFIDENCE_INTERVAL_SCALE = 2;
 
 class Statistics {
