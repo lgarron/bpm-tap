@@ -8,8 +8,6 @@ URL           = "http://garron.net/dance/bpm/"
 
 .PHOHY: deploy
 deploy:
-	manifest --update "${MANIFEST_FILE}"
 	rsync -avz --exclude .git . "${SFTP_PATH}"
-	manifest --revert "${MANIFEST_FILE}"
 	echo "Done deploying. Go to ${URL}"
 
