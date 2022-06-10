@@ -285,3 +285,7 @@ body.slow-transition .header {
 body.flash .header {
   background: #4887c3;
 }
+
+#uncertainty {
+  display: none;
+}
