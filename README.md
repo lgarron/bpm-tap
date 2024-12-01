@@ -1,8 +1,10 @@
 # BPM Tap Tool
 
-A tool for finding the beats per minute of a song (or anything) by tapping.
+A tool for finding the beats per minute of a song (of anything) by tapping.
 
 ## Features
 
-- Touch support. Works on mobile devices!
-- Shows a confidence interval.
+- Basic Touch support. Works on mobile devices!
+
+## TODO
+- Median beat length.
