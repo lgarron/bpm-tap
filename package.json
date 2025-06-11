@@ -1,11 +1,14 @@
 {
-  "version": "1.0.0",
+  "version": "2.1.0",
   "description": "A tool for finding the beats per minute of a song (or anything) by tapping.",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/lgarron/bpm-tap.git"
   },
-  "keywords": ["dance", "dj"],
+  "keywords": [
+    "dance",
+    "dj"
+  ],
   "author": "",
   "license": "MIT",
   "bugs": {
