@@ -1,349 +1,58 @@
 <html>
+
 <head>
-<title>Tap for Beats Per Minute BPM</title>
+  <title>Tap for Beats Per Minute BPM</title>
 
-<script language="JavaScript">
-var fileName = "beats";
-
-var count = 0;
-var msecsFirst = 0;
-var msecsPrevious = 0;
-var playing = false;
-var startTime = 0;
-var beats = [];
-
-function currentTime() {
-  var time = document.getElementById("audio").currentTime;
-  return time;
-}
-
-function ResetCount()
-{
-  count = 0;
-  document.TAP_DISPLAY.T_AVG.value = "";
-  document.TAP_DISPLAY.T_TAP.value = "";
-  document.TAP_DISPLAY.T_RESET.blur();
-}
-
-function startAudio(force) {
-  if (!playing || force) {
-    document.getElementById("audio").currentTime = 0;
-    document.getElementById("audio").play();
-    startTime = currentTime();
-    playing = true;
-  }
-}
-
-function displayBeats() {
-  document.getElementById("beat_vals").innerHTML = JSON.stringify(beats);
-  document.getElementById("num_beats").innerHTML = beats.length;
-}
-
-function resetBeats() {
-  beats = [];
-  displayBeats();
-}
-
-function undoLastBeats(n) {
-  len = Math.max(beats.length - n, 0);
-  beats.length = len;
-  document.getElementById("audio").currentTime = beats[len-1][0];
-  displayBeats();
-}
-
-function TapForBPM(e)
-{
-  console.log(e.keyCode);
-  switch (e.keyCode) {
-    case 122: // z
-      ResetCount();
-      return true;
-      break;
-    case 115: // s
-      startAudio(false);
-      break;
-    case 114: // r
-      startAudio(true);
-      break;
-    case 113: // q
-      resetBeats();
-      break;
-    case 98: // b
-      undoLastBeats(3);
-      break;
-    case 99: // c
-      addBeat(true);
-      break;
-    case 109: // m
-      addBeat(true);
-      break;
-    default:
-      addBeat(false);
-      break;
-  }
-}
-
-function addBeat(n) {
-  msecs = Math.floor(currentTime()*1000);
-  toPush = [(msecs - startTime)/1000., 0];
-  if (n) {
-    toPush[1] = 1;
-  }
-  beats.push(toPush);
-
-  displayBeats();
-
-  if (count == 0)
-  {
-    document.TAP_DISPLAY.T_AVG.value = "First Beat";
-    document.TAP_DISPLAY.T_TAP.value = "First Beat";
-    msecsFirst = msecs;
-    count = 1;
-  }
-  else
-  {
-    bpmAvg = 60000 * count / (msecs - msecsFirst);
-    document.TAP_DISPLAY.T_AVG.value = (Math.round(bpmAvg * 100)) / 100;
-    count++;
-    document.TAP_DISPLAY.T_TAP.value = count;
-  }
-
-  msecsPrevious = msecs;
-  
-  return true;
-
-}
-
-
-function touchStart() {
-  console.log("touchStart")
-  document.getElementById("T_TAP").setAttribute("class", "disp tapped");
-  addBeat(false);
-}
-
-function touchEnd() {
-  document.getElementById("T_TAP").setAttribute("class", "disp");
-}
-
-document.onkeypress = TapForBPM;
-function dragEnter(ev) {
-  console.log("dragEnter");
-  ev.preventDefault();
-  console.log("Enter");
-  //ev.preventDefault();
-  return true;
-}
-
-function setDragDropVisualFeedback(text, cssClass) {
-  document.getElementById("new_song").innerHTML = text;
-  var cL = document.getElementById("new_song").classList;
-  while (cL.length > 0) {
-    cL.remove(cL[0]);
-  }
-  document.getElementById("new_song").classList.add(cssClass);
-}
-
-function dragOver(ev) {
-  console.log("dragOver");
-  ev.preventDefault();
-  console.log("Over");
-  setDragDropVisualFeedback("Let Go!", "over");
-  return false;
-}
-
-function dragLeave(ev) {
-  console.log("dragLeave");
-  ev.preventDefault();
-  console.log("Leave");
-  setDragDropVisualFeedback("Come back! :-D", "out");
-  return false;
-}
-
-var fff;
-var ggg;
-
-function dragDrop(ev) {
-  console.log("dragDrop");
-  ev.preventDefault();
-  console.log("Drop");
-  var src = ev.dataTransfer.files[0];
-  fileName = src.name;
-  console.log(fileName)
-  var bl = new Blob([src]);
-  document.getElementById("audio").src = window.webkitURL.createObjectURL(bl);
-  
-  console.log(document.getElementById("audio").src);
-
-  // I can't find the right way to check this. For now, it'll always report success. :-/
-  if (document.getElementById("audio").src !== undefined) {
-    setDragDropVisualFeedback("Got it! :-)<br>Press 's' to begin playing.", "done");
-  }
-  else {
-    setDragDropVisualFeedback("Didn't work. :-(<br>(Did you open this page on your hard drive?)", "error");
-  }
-  
-  return false;
-}
-
-function downloaddd(filename, text) {
-  console.log(arguments)
-  filename = filename || "beats";
-
-  var myFile = new Blob([text], {type: "text/plain"});
-
-  const n = JSON.parse(text).length;
-
-  var element = document.createElement("a");
-  element.setAttribute("href", window.URL.createObjectURL(myFile));
-  element.setAttribute("download", `${filename} (${n} beats).json`);
-
-  element.style.display = "none";
-  document.body.appendChild(element);
-
-  console.log(element);
-
-  element.click();
-
-  document.body.removeChild(element);
-}
-
-function ini() {
-  // document.getElementById("tap_area").addEventListener( 'touchstart', touchStart, false );
-  //document.getElementById("tap_area").addEventListener( 'touchend', touchEnd, false );
-  //document.getElementById("tap_area").addEventListener( 'mousedown', touchStart, false );
-  //document.getElementById("tap_area").addEventListener( 'mouseup', touchEnd, false );
-
-
-  document.body.addEventListener( 'dragenter', dragEnter, false );
-  document.body.addEventListener( 'dragover', dragOver, false );
-  document.body.addEventListener( 'dragleave', dragLeave, false );
-  document.body.addEventListener( 'drop', dragDrop, false );;
-  document.body.querySelector("#download_json").addEventListener("click", function(e) {
-    console.log(e);
-    downloaddd(fileName, document.getElementById("beat_vals").value)
-    e.preventDefault();
-  });
-}
-
-</script>
-
-<style type="text/css">
-	body {
-		font-family: Helvetica;
-		background: #ABC;
-		color: rgba(0,0,0,0.5);
-	}
-	.label {
-		font-family: monospace;
-		text-align: center;
-		font-size: 2em;
-	}
-  .disp {
-    font-size: 4em;
-    text-align: center;
-    background: rgba(0, 0, 0, 0.1);
-    color: #000;
-    border: none;
-    font-family: monospace; 
-    width: 100%;
-    border-radius: 0.25em;
-    max-width: 7em;
-  }
-  .tapped {
-    background: rgba(255, 255, 255,0.8);
-  }
-	.main {
-		border: 1px solid #888;
-		border-radius: 1em;
-		padding: 0em;
-		background: rgba(0, 0, 0, 0.05);
-		padding: 1em;
-	}
-	.notes {
-		text-align: center;
-	}
-	.comment {
-		font-size: 70%;
-	}
-  #beat_vals {
-    width: 100%;
-    height: 150px;
-  }
-  #new_song, #num_beats {
-    font-size: 120%;
-    padding: 0.5em;
-    margin: 0.5em;
-    width: 400px;
-    background: rgba(0, 0, 0, 0.1);
-    border-radius: 8px;
-  }
-  #new_song.over {
-    background: rgba(255, 255, 0, 0.5);
-  }
-  #new_song.out {
-    background: rgba(255, 0, 0, 0.5);
-  }
-  #new_song.done {
-    background: rgba(0, 255, 0, 0.5);
-  }
-  #new_song.error {
-    background: rgba(255, 0, 0, 0.7);
-  }
-  #instructions {
-    text-align: left;
-    margin: auto;
-    width: 250px;
-  }
-  #tap_area {
-    display: none; /* The fields may have false information if "B" was pressed. */
-  }
-</style>
+  <script src="./audio.js" href="./audio.ts" type="module"></script>
+  <link rel="stylesheet" href="./audio.css">
 </head>
 
 <body onload="ini()">
 
 
-<form name="TAP_DISPLAY">
-<div class="main">
+  <form>
+    <div class="main">
 
-<center>
-<audio controls preload="yes" autobuffer id="audio"></audio>
-<div id="new_song">Drag and drop a song here!</div>
-<div id="num_beats">Beats</div>
-</center>
+      <center>
+        <audio controls preload="yes" autobuffer id="audio"></audio>
+        <div id="new_song">Drag and drop a song here!</div>
+        <div id="num_beats">Beats</div>
+      </center>
 
-<div id="tap_area">
-<div class="label">Average BPM</div>
-<center><input readonly name="T_AVG" id="T_AVG" class="disp" size=12></center>
-<div class="label">Timing Taps</div>
-<center><input readonly name="T_TAP" id="T_TAP" class="disp" size=12></center>
-</div>
+      <div id="tap_area">
+        <div class="label">Average BPM</div>
+        <center><input readonly id="T_AVG" class="disp" size=12></center>
+        <div class="label">Timing Taps</div>
+        <center><input readonly id="T_TAP" class="disp" size=12></center>
+      </div>
 
-<div class="notes">
-<div id="instructions">
-  <ul>
-    <li>R/S: (Re-)Start the song</li>
-    <li>Q: Clear the beats</li>
-    <li>B: Back a few beats</li>
-    <li>Space: Beats</li>
-    <li>C/M: Downbeat</li>
-  </ul>
-</div>
+      <div class="notes">
+        <div id="instructions">
+          <ul>
+            <li>R/S: (Re-)Start the song</li>
+            <li>Q: Clear the beats</li>
+            <li>B: Back a few beats</li>
+            <li>Space: Beats</li>
+            <li>C/M: Downbeat</li>
+          </ul>
+        </div>
 
-<center>
-<textarea id="beat_vals">[]
+        <center>
+          <textarea id="beat_vals">[]
 </textarea>
-</center>
-</form>
-<br>
+        </center>
+  </form>
+  <br>
 
-<button id="download_json">Download <code>.json</code></button>
+  <button id="download_json">Download <code>.json</code></button>
 
-<div class="comment">
-<p><a href="./">Regular BPM</a></p>
-</div></div>
+  <div class="comment">
+    <p><a href="./">Regular BPM</a></p>
+  </div>
+  </div>
 
-</div>
+  </div>
 
 </body>
+
 </html>

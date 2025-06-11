@@ -8,12 +8,15 @@
   src: url("vendor/digital-7.ttf") format("truetype");
 }
 
-body, div, span {
+body,
+div,
+span {
   margin: 0;
   padding: 0;
 }
 
-html, body {
+html,
+body {
   height: 100%;
 }
 
@@ -25,12 +28,10 @@ body {
 * {
   -webkit-touch-callout: none;
   -webkit-user-select: none;
-  -khtml-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
 }
-
 
 .bpm-app {
   flex: 3;
@@ -38,7 +39,7 @@ body {
   flex-direction: column;
   align-items: flex-start;
   justify-content: center;
-  text-align: center
+  text-align: center;
 }
 
 a#update-bar {
@@ -66,7 +67,8 @@ a#update-bar.hidden {
   height: 0;
 }
 
-.header, .event-select select {
+.header,
+.event-select select {
   font-size: 5vh;
   /* Would use Roboto, except that primes (') are easier to read in Helvetica. */
   font-family: Helvetica, "Tahoma", sans-serif;
@@ -77,14 +79,14 @@ a#update-bar.hidden {
   flex: 0 0 auto;
   width: 100%;
   padding: 0.25em 0;
-  background: #0C5093;
+  background: #0c5093;
   /*border-bottom: 1px solid rgba(0, 0, 0, 0.1);*/
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: center;
   white-space: nowrap;
-  box-shadow: 0 0 4px rgba(0,0,0,.14),0 4px 8px rgba(0,0,0,.28);
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.14), 0 4px 8px rgba(0, 0, 0, 0.28);
   flex-wrap: wrap;
 }
 
@@ -93,7 +95,7 @@ a#update-bar.hidden {
   border: 1px solid rgba(0, 0, 0, 0.25);
   padding: 0 0.3em;
   margin: 0.25em 1em;
-  background: rgba(255, 255, 255, .25);
+  background: rgba(255, 255, 255, 0.25);
 }
 
 .event-select .cubing-icon {
@@ -108,8 +110,8 @@ a#update-bar.hidden {
   background: none;
 
   -webkit-appearance: none;
-  -moz-appearance:    none;
-  appearance:         none;
+  -moz-appearance: none;
+  appearance: none;
 }
 
 .scramble-text {
@@ -119,7 +121,7 @@ a#update-bar.hidden {
   text-align: center;
 }
 
-@supports ( (text-align-last: center) or (-moz-text-align-last: center) ) {
+@supports ((text-align-last: center) or (-moz-text-align-last: center)) {
   .scramble-text {
     text-align: justify;
     text-align-last: center;
@@ -157,7 +159,7 @@ a#update-bar.hidden {
   align-items: center;
   justify-content: center;
   transition: background-color 0s;
-  -webkit-tap-highlight-color: rgba(0,0,0,0);
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 }
 
 /* Slow down transitions into some states. */
@@ -201,7 +203,7 @@ a#update-bar.hidden {
   opacity: 0;
 }
 
-@media (max-aspect-ratio: 1/1) {
+@media (max-aspect-ratio: 1 / 1) {
   .display-value {
     font-size: 40vw;
   }
@@ -213,7 +215,7 @@ a#update-bar.hidden {
   }
 }
 
-@media (min-aspect-ratio: 1/1) {
+@media (min-aspect-ratio: 1 / 1) {
   .display-value {
     flex-direction: row;
     align-items: baseline;
@@ -224,14 +226,14 @@ a#update-bar.hidden {
   }
 }
 
-@media (min-aspect-ratio: 2/1) {
+@media (min-aspect-ratio: 2 / 1) {
   .display-value {
     font-size: 20vw;
   }
 }
 
 .display-value .sec-first {
-  font-family: digital-7;
+  font-family: digital-7, monospace;
 }
 
 .display-value .decimals {
@@ -245,7 +247,6 @@ a#update-bar.hidden {
   border-top: 1px solid rgba(0, 0, 0, 0.25);
   color: black;
   width: 100%;
-
 }
 
 .stats select {
@@ -262,8 +263,8 @@ a#update-bar.hidden {
   background: none;
 
   -webkit-appearance: none;
-  -moz-appearance:    none;
-  appearance:         none;
+  -moz-appearance: none;
+  appearance: none;
 
   text-align: center;
   text-align-last: center;

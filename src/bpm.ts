@@ -1,29 +1,32 @@
-"use strict";
-
-var $ = document.querySelector.bind(document);
-
-var ONE_MINUTE_MS = 60000;
-var RESET_TIMEOUT_MS: number = 5000;
+const ONE_MINUTE_MS = 60000;
+const RESET_TIMEOUT_MS = 5000;
 
 // https://en.wikipedia.org/wiki/Confidence_interval#Basic_steps
 // 99% Confidence Interval
-var Z_STAR_99_PERCENT = 2.576;
+const Z_STAR_99_PERCENT = 2.576;
 // Adjacent tap deviations are correlated, so normal confidence interval
 // estimation is actually kind of useless. This adjustment doesn't mean much, but it works roughly right in practice.
-var CONFIDENCE_INTERVAL_SCALE = 2;
+const CONFIDENCE_INTERVAL_SCALE = 2;
 
+class Estimate {
+  constructor(
+    public bpm: number,
+    public confidence_radius_99_percent: number | null,
+  ) {}
+}
+
+// biome-ignore lint/complexity/noStaticOnlyClass: legacy code
 class Statistics {
-
   private static total(l: number[]): number {
-    var total = 0;
-    for (var i in l) {
+    let total = 0;
+    for (const i in l) {
       total += l[i];
     }
     return total;
   }
 
   public static mean(l: number[]): number {
-    return this.total(l) / l.length;
+    return Statistics.total(l) / l.length;
   }
 
   private static compareNumbers(a: number, b: number) {
@@ -31,39 +34,36 @@ class Statistics {
   }
 
   public static sort(l: number[]) {
-    return l.sort(this.compareNumbers);
+    return l.sort(Statistics.compareNumbers);
   }
 
   // // From timer.cubing.net
   // Removes the highest 5% and lowest 5% of values in l (rounded up to a whole
   // number of entries in each case, and returns the rest sorted.
   public static trim(l: number[]): number[] {
-    var len = l.length;
+    const len = l.length;
     if (len < 3) {
       return [];
     }
 
-    var trimFromEachEnd = Math.ceil(len / 20);
-    return this.sort(l).slice(trimFromEachEnd, len - trimFromEachEnd);
+    const trimFromEachEnd = Math.ceil(len / 20);
+    return Statistics.sort(l).slice(trimFromEachEnd, len - trimFromEachEnd);
   }
 
   public static stdDev(l: number[]) {
-    var m = this.mean(l);
-    var deltas = [];
-    for (var i in l) {
-      deltas.push(Math.pow(l[i] - m, 2));
+    const m = Statistics.mean(l);
+    const deltas = [];
+    for (const i in l) {
+      deltas.push((l[i] - m) ** 2);
     }
-    return Math.sqrt(this.mean(deltas));
+    return Math.sqrt(Statistics.mean(deltas));
   }
-}
-
-class Estimate {
-  constructor(public bpm: number, public confidence_radius_99_percent: number|null) {}
 }
 
 // Calculates a 99% confidence interval.
 class TempoEstimator {
-  private lastBeat: number|null = null;
+  // biome-ignore lint/style/noInferrableTypes: dude
+  private lastBeat: number = 0;
   private beatDurations: number[] = []; // TODO: Keep sorted for performance?
 
   public isLastBeatWithin(duration: number, timeStamp: number): boolean {
@@ -71,7 +71,7 @@ class TempoEstimator {
   }
 
   public reset(): void {
-    this.lastBeat = null;
+    this.lastBeat = 0;
     this.beatDurations = [];
   }
 
@@ -81,15 +81,19 @@ class TempoEstimator {
   }
 
   public getEstimate(): Estimate {
-    var trimmed = Statistics.trim(this.beatDurations);
-    var mean = Statistics.mean(trimmed);
-    var stdDev = Statistics.stdDev(trimmed);
-    var bpm_estimate = ONE_MINUTE_MS / mean;
+    const trimmed = Statistics.trim(this.beatDurations);
+    const mean = Statistics.mean(trimmed);
+    const stdDev = Statistics.stdDev(trimmed);
+    const bpm_estimate = ONE_MINUTE_MS / mean;
 
-    var duration_confidence_radius_99_percent = Z_STAR_99_PERCENT * stdDev / Math.sqrt(trimmed.length) / CONFIDENCE_INTERVAL_SCALE;
+    const duration_confidence_radius_99_percent =
+      (Z_STAR_99_PERCENT * stdDev) /
+      Math.sqrt(trimmed.length) /
+      CONFIDENCE_INTERVAL_SCALE;
     // The radius becomes slightly asymmetric when inverted, so we take the larger one.
-    var bpm_confidence_radius_99_percent = ONE_MINUTE_MS / (mean - duration_confidence_radius_99_percent) - bpm_estimate;
-
+    let bpm_confidence_radius_99_percent: number | null =
+      ONE_MINUTE_MS / (mean - duration_confidence_radius_99_percent) -
+      bpm_estimate;
 
     if (trimmed.length < 4) {
       bpm_confidence_radius_99_percent = null;
@@ -101,36 +105,51 @@ class TempoEstimator {
 class App {
   private tempoEstimator: TempoEstimator = new TempoEstimator();
 
-  public registerListeners(el): void {
-    document.body.addEventListener("keypress", this.onKey.bind(this));
-    $(".bpm-app .display").addEventListener("touchstart", this.onTouch.bind(this));
+  public registerListeners(el: HTMLElement): void {
+    el.addEventListener("keypress", this.onKey.bind(this));
+    mustExist(
+      document.querySelector<HTMLElement>(".bpm-app .display"),
+    ).addEventListener("touchstart", this.onTouch.bind(this));
   }
 
-  private displayValue(elem: HTMLElement, val: number, defaultRest: string): void {
-    var intFirstStr = "_";
-    var intRestStr = defaultRest;
-    var decimalStr = "_";
+  private displayValue(
+    elem: HTMLElement,
+    val: number,
+    defaultRest: string,
+  ): void {
+    let intFirstStr = "_";
+    let intRestStr = defaultRest;
+    let decimalStr = "_";
     if (val) {
-      var strValTimes10 = "" + Math.round(val * 10);
+      const strValTimes10 = `${Math.round(val * 10)}`;
       intFirstStr = val < 1 ? String("0") : strValTimes10[0];
       intRestStr = strValTimes10.slice(1, -1);
       decimalStr = strValTimes10.slice(-1);
     }
-    elem.querySelector(".int .first").textContent = intFirstStr;
-    elem.querySelector(".int .rest").textContent = intRestStr;
-    elem.querySelector(".decimal").textContent = decimalStr;
+    mustExist(elem.querySelector(".int .first")).textContent = intFirstStr;
+    mustExist(elem.querySelector(".int .rest")).textContent = intRestStr;
+    mustExist(elem.querySelector(".decimal")).textContent = decimalStr;
   }
 
   private display() {
-    var estimate = this.tempoEstimator.getEstimate();
-    this.displayValue($("#bpm-value"), estimate.bpm, "__");
-    this.displayValue($("#uncertainty"), estimate.confidence_radius_99_percent, "_");
+    const estimate = this.tempoEstimator.getEstimate();
+    this.displayValue(
+      mustExist(document.querySelector("#bpm-value")),
+      estimate.bpm,
+      "__",
+    );
+    this.displayValue(
+      mustExist(document.querySelector("#uncertainty")),
+      // biome-ignore lint/style/noNonNullAssertion: <explanation>
+      estimate.confidence_radius_99_percent!,
+      "_",
+    );
   }
 
   public flashBody(): void {
     document.body.classList.remove("slow-transition");
     document.body.classList.add("flash");
-    setTimeout(function() {
+    setTimeout(() => {
       document.body.classList.add("slow-transition");
       document.body.classList.remove("flash");
     }, 10);
@@ -169,8 +188,8 @@ class App {
   }
 }
 
-var appInstance = new App();
+const appInstance = new App();
 
-window.addEventListener("load", function() {
+window.addEventListener("load", () => {
   appInstance.registerListeners(document.body);
 });
