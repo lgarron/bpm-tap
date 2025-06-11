@@ -1,11 +1,11 @@
 @font-face {
   font-family: digital-7-mono;
-  src: url("lib/digital-7-mono.ttf") format("truetype");
+  src: url("vendor/digital-7-mono.ttf") format("truetype");
 }
 
 @font-face {
   font-family: digital-7;
-  src: url("lib/digital-7.ttf") format("truetype");
+  src: url("vendor/digital-7.ttf") format("truetype");
 }
 
 body, div, span {

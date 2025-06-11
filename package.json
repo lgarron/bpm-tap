@@ -1,32 +1,26 @@
 {
-  "name": "bpm-tap",
   "version": "1.0.0",
   "description": "A tool for finding the beats per minute of a song (or anything) by tapping.",
-  "main": "index.js",
-  "directories": {
-    "lib": "lib"
-  },
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/lgarron/bpm-tap.git"
   },
-  "keywords": [],
+  "keywords": ["dance", "dj"],
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/lgarron/bpm-tap/issues"
   },
   "homepage": "https://github.com/lgarron/bpm-tap#readme",
   "dependencies": {
+    "barely-a-dev-server": "^0.8.1",
     "typescript": "^4.7.3"
   },
   "@cubing/deploy": {
-    "https://garron.net/dance/bpm/": {
-      "fromLocalDir": ".",
-      "additionalExcludes": ["node_modules"]
-    }
+    "https://garron.net/dance/bpm/": {}
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^1.9.4",
+    "@cubing/dev-config": "^0.3.6"
   }
 }
