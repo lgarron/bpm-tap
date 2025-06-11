@@ -1,6 +1,13 @@
 const ONE_MINUTE_MS = 60000;
 const RESET_TIMEOUT_MS = 5000;
 
+function mustExist<T>(t: T | null): NonNullable<T> {
+  if (!t) {
+    throw new Error("Missing element");
+  }
+  return t;
+}
+
 // https://en.wikipedia.org/wiki/Confidence_interval#Basic_steps
 // 99% Confidence Interval
 const Z_STAR_99_PERCENT = 2.576;
@@ -17,7 +24,7 @@ class Estimate {
 
 // biome-ignore lint/complexity/noStaticOnlyClass: legacy code
 class Statistics {
-  private static total(l: number[]): number {
+  public static total(l: number[]): number {
     let total = 0;
     for (const i in l) {
       total += l[i];
@@ -29,7 +36,7 @@ class Statistics {
     return Statistics.total(l) / l.length;
   }
 
-  private static compareNumbers(a: number, b: number) {
+  public static compareNumbers(a: number, b: number) {
     return a - b;
   }
 

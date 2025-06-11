@@ -12,15 +12,13 @@
     "url": "https://github.com/lgarron/bpm-tap/issues"
   },
   "homepage": "https://github.com/lgarron/bpm-tap#readme",
-  "dependencies": {
-    "barely-a-dev-server": "^0.8.1",
-    "typescript": "^4.7.3"
-  },
   "@cubing/deploy": {
     "https://garron.net/dance/bpm/": {}
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
-    "@cubing/dev-config": "^0.3.6"
+    "@cubing/dev-config": "^0.3.6",
+    "barely-a-dev-server": "^0.8.1",
+    "typescript": "v5.8.3"
   }
 }

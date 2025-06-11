@@ -7,13 +7,6 @@ let playing = false;
 let startTime = 0;
 let beats: [number, number][] = [];
 
-function mustExist<T>(t: T | null): NonNullable<T> {
-  if (!t) {
-    throw new Error("Missing element");
-  }
-  return t;
-}
-
 const audioElem = document.getElementById("audio") as HTMLAudioElement;
 
 function currentTime() {
